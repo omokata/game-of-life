@@ -7,5 +7,13 @@
 int main(void)
 {
 	InitWindow(WIN_WIDTH, WIN_HEIGHT, WIN_TITLE);
+
+	while(!WindowShouldClose()) {
+		BeginDrawing();
+		ClearBackground(RED);
+		EndDrawing();
+	}
+
+	CloseWindow();
 	return 0;
 }
