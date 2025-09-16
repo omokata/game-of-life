@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -Wall -Wextra
-CLIBS = -lraylib
+CFLAGS = -Wall -Wextra -I./include -L.
+LDFLAGS = -lm -lraylib
 
 TARGET = gol
 SRCS = main.c
@@ -10,7 +10,7 @@ SRCS = main.c
 all: $(TARGET)
 
 $(TARGET): $(SRCS)
-	$(CC) $(CFLAGS) -o $(TARGET) $(SRCS) $(CFLAGS)
+	$(CC) $(CFLAGS) -o $(TARGET) $(SRCS) $(LDFLAGS)
 
 run:
 	./$(TARGET)

@@ -1,2 +1,5 @@
 gol
 *.exe
+
+compile_commands.json
+.cache/
