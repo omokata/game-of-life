@@ -36,6 +36,8 @@ int main(void)
 		BeginDrawing();
 		ClearBackground(BLACK);
 
+		// TODO: Add line to visualize the grid
+
 		for (int row = 0; row < row_count; ++row) {
 			for (int col = 0; col < col_count; ++col) {
 				if (cell[row][col] == 1) {
