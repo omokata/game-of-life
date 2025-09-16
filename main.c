@@ -10,9 +10,14 @@ int main(void)
 {
 	InitWindow(WIN_WIDTH, WIN_HEIGHT, WIN_TITLE);
 
-	int col_count, row_count;
-	col_count = 20;
-	row_count = 15;
+	// Use ratio 4 : 3 for Col and Row to draw a square for when drawing
+	// the rectangle. Otherwise it'll draw a rectangle. This is chose
+	// by WIN_WIDTH and WIN_HEIGHT. 
+	// TODO: Refactor later so it's easier to adjust cell size
+	int multiplier, col_count, row_count;
+	multiplier = 10;
+	col_count = 4 * multiplier;
+	row_count = 3 * multiplier;
 	int cell[row_count][col_count];
 
 	for (int row = 0; row < row_count; ++row) {
