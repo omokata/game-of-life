@@ -2,7 +2,11 @@
 
 Conway's game of life made with C and Raylib.
 
-https://github.com/user-attachments/assets/c7486aa8-c1e1-4f10-a94b-60d3d77cccd8
+
+
+https://github.com/user-attachments/assets/1e3aaa08-c616-4aae-ac49-a83c266c8839
+
+
 
 ## Build
 
