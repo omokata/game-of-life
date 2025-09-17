@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "raylib.h"
 
 #define WIN_WIDTH  800
@@ -27,11 +28,14 @@ int main(void)
 		}
 	}
 
-	cell[5][3] = 1;
-
 	float cell_width, cell_height;
-	cell_width  = (float)WIN_WIDTH   / col_count;
-	cell_height = (float)WIN_HEIGHT /  row_count;
+	cell_width = (float)WIN_WIDTH/col_count;
+	cell_height = (float)WIN_HEIGHT/row_count;
+
+	printf("column count: %d\n", col_count);
+	printf("row count: %d\n", row_count);
+	printf("cell width: %f\n", cell_width);
+	printf("cell height: %f\n", cell_height);
 
 	while(!WindowShouldClose()) {
 		BeginDrawing();
@@ -63,7 +67,21 @@ int main(void)
 			}
 		}
 
-		// TODO: Handle click on cell to fill it
+		// Handle click on cell to fill it
+		if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+			Vector2 mousePosition = GetMousePosition();
+			int col_index = mousePosition.x / WIN_WIDTH * col_count;
+			int row_index = mousePosition.y / WIN_HEIGHT * row_count;
+			printf("x: %f, y: %f\n", mousePosition.x, mousePosition.y);
+			printf("col: %d, row: %d\n", col_index, row_index);
+
+			int cell_value = cell[row_index][col_index];
+			if (cell_value) {
+				cell[row_index][col_index] = 0;
+			} else {
+				cell[row_index][col_index] = 1;
+			}
+		}
 
 		EndDrawing();
 	}
