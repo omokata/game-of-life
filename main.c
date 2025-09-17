@@ -9,7 +9,7 @@
 #define CELL_FILL_COLOR WHITE
 #define GRID_LINE_COLOR WHITE
 
-#define CELL_RENDER_TICK 1 // 1 second
+#define CELL_RENDER_TICK 0.25f // in seconds
 
 #define EIGHT_NEIGHBORS_COUNT 8
 static int eight_neighbors[][2] = {
@@ -152,7 +152,8 @@ int main(void)
 			}
 		}
 
-		// TODO: Apply the rules of Game of Life
+		// Update the next gen based on the current gen following the
+		// rules on wiki: https://en.wikipedia.org/wiki/Conway's_Game_of_Life
 		for (int row = 0; row < row_count; ++row) {
 			for (int col = 0; col < col_count; ++col) {
 				int curr_row = row;
