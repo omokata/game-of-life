@@ -63,6 +63,7 @@ int main(void)
 			}
 		}
 
+		// TODO: Handle click on cell to fill it
 
 		EndDrawing();
 	}
