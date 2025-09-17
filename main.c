@@ -9,7 +9,7 @@
 #define CELL_FILL_COLOR WHITE
 #define GRID_LINE_COLOR WHITE
 
-#define CELL_RENDER_TICK 0.25f // in seconds
+#define CELL_RENDER_TICK 0.10f // in seconds
 
 #define EIGHT_NEIGHBORS_COUNT 8
 static int eight_neighbors[][2] = {
@@ -54,7 +54,7 @@ int main(void)
 	// by WIN_WIDTH and WIN_HEIGHT. 
 	// TODO: Refactor later so it's easier to adjust cell size
 	int multiplier, col_count, row_count;
-	multiplier = 10;
+	multiplier = 20;
 	col_count = 4 * multiplier;
 	row_count = 3 * multiplier;
 	int current_gen[row_count][col_count];
@@ -135,6 +135,37 @@ int main(void)
 		// Copy next gen to current gen
 		if (is_gol_play) {
 
+			// Reset the next gen
+			for (int row = 0; row < row_count; ++row) {
+				for (int col = 0; col < col_count; ++col) {
+					next_gen[row][col] = 0;
+				}
+			}
+
+			// Update the next gen based on the current gen following the
+			// rules on wiki: https://en.wikipedia.org/wiki/Conway's_Game_of_Life
+			for (int row = 0; row < row_count; ++row) {
+				for (int col = 0; col < col_count; ++col) {
+					int curr_row = row;
+					int curr_col = col;
+					int curr_cell = current_gen[curr_row][curr_col];
+					int n_neighbors = get_neighbors_count(col_count, row_count,
+										   current_gen, curr_row, curr_col);
+
+					if (curr_cell) {
+						if (n_neighbors == 2 || n_neighbors == 3) {
+							next_gen[curr_row][curr_col] = 1;
+						} else {
+							next_gen[curr_row][curr_col] = 0;
+						}
+					} else {
+						if (n_neighbors == 3) {
+							next_gen[curr_row][curr_col] = 1;
+						}
+					}
+				}
+			}
+
 			if (cell_render_time_acc >= CELL_RENDER_TICK) {
 				cell_render_time_acc = 0;
 				for (int row = 0; row < row_count; ++row) {
@@ -143,37 +174,7 @@ int main(void)
 					}
 				}
 			}
-		}
 
-		// Reset the next gen
-		for (int row = 0; row < row_count; ++row) {
-			for (int col = 0; col < col_count; ++col) {
-				next_gen[row][col] = 0;
-			}
-		}
-
-		// Update the next gen based on the current gen following the
-		// rules on wiki: https://en.wikipedia.org/wiki/Conway's_Game_of_Life
-		for (int row = 0; row < row_count; ++row) {
-			for (int col = 0; col < col_count; ++col) {
-				int curr_row = row;
-				int curr_col = col;
-				int curr_cell = current_gen[curr_row][curr_col];
-				int n_neighbors = get_neighbors_count(col_count, row_count,
-									 current_gen, curr_row, curr_col);
-		
-				if (curr_cell) {
-					if (n_neighbors == 2 || n_neighbors == 3) {
-						next_gen[curr_row][curr_col] = 1;
-					} else {
-						next_gen[curr_row][curr_col] = 0;
-					}
-				} else {
-					if (n_neighbors == 3) {
-						next_gen[curr_row][curr_col] = 1;
-					}
-				}
-			}
 		}
 
 		EndDrawing();
