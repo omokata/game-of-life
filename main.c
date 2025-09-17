@@ -5,6 +5,7 @@
 #define WIN_TITLE  "Conway's Game of Life"
 
 #define CELL_FILL_COLOR WHITE
+#define GRID_LINE_COLOR WHITE
 
 int main(void)
 {
@@ -36,7 +37,17 @@ int main(void)
 		BeginDrawing();
 		ClearBackground(BLACK);
 
-		// TODO: Add line to visualize the grid
+		// Draw Grid Line Here
+		for (int row = 0; row < row_count; ++row) {
+			Vector2 startPos = {.x = 0, .y = row * cell_height};
+			Vector2 endPos = {.x = WIN_WIDTH, .y = startPos.y};
+			DrawLineV(startPos, endPos, GRID_LINE_COLOR);
+		}
+		for (int col = 0; col < col_count; ++col) {
+			Vector2 startPos = {.x = col * cell_width, .y = 0};
+			Vector2 endPos = {.x = startPos.x, .y = WIN_HEIGHT};
+			DrawLineV(startPos, endPos, GRID_LINE_COLOR);
+		}
 
 		for (int row = 0; row < row_count; ++row) {
 			for (int col = 0; col < col_count; ++col) {
