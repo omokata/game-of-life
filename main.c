@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdio.h>
 #include "raylib.h"
 
@@ -8,9 +9,45 @@
 #define CELL_FILL_COLOR WHITE
 #define GRID_LINE_COLOR WHITE
 
+#define CELL_RENDER_TICK 1 // 1 second
+
+#define EIGHT_NEIGHBORS_COUNT 8
+static int eight_neighbors[][2] = {
+	{0, -1},
+	{0, 1},
+	{1, 0},
+	{-1, 0},
+	{-1, -1},
+	{-1, 1},
+	{1, -1},
+	{1, 1},
+};
+
+int get_neighbors_count(int col_count, int row_count,
+						int current_gen[row_count][col_count],
+						int curr_row, int curr_col)
+{
+	int n_neighbors = 0;
+	for (int i = 0; i < EIGHT_NEIGHBORS_COUNT; ++i) {
+		int neighbor_row = curr_row + eight_neighbors[i][0];
+		int neighbor_col = curr_col + eight_neighbors[i][1];
+		if ((neighbor_col < 0 || neighbor_col >= col_count) ||
+			(neighbor_row < 0 || neighbor_row >= row_count)) {
+			continue;
+		}
+		if (current_gen[neighbor_row][neighbor_col] == 1) {
+			n_neighbors++;
+		}
+	}
+
+	return n_neighbors;
+}
+
 int main(void)
 {
 	InitWindow(WIN_WIDTH, WIN_HEIGHT, WIN_TITLE);
+
+	bool is_gol_play = false;
 
 	// Use ratio 4 : 3 for Col and Row to draw a square for when drawing
 	// the rectangle. Otherwise it'll draw a rectangle. This is chose
@@ -20,11 +57,13 @@ int main(void)
 	multiplier = 10;
 	col_count = 4 * multiplier;
 	row_count = 3 * multiplier;
-	int cell[row_count][col_count];
+	int current_gen[row_count][col_count];
+	int next_gen[row_count][col_count];
 
 	for (int row = 0; row < row_count; ++row) {
 		for (int col = 0; col < col_count; ++col) {
-			cell[row][col] = 0;
+			current_gen[row][col] = 0;
+			next_gen[row][col] = 0;
 		}
 	}
 
@@ -37,7 +76,12 @@ int main(void)
 	printf("cell width: %f\n", cell_width);
 	printf("cell height: %f\n", cell_height);
 
+	float cell_render_time_acc = 0;
+
 	while(!WindowShouldClose()) {
+		float deltatime = GetFrameTime();
+		cell_render_time_acc += deltatime;
+
 		BeginDrawing();
 		ClearBackground(BLACK);
 
@@ -53,9 +97,10 @@ int main(void)
 			DrawLineV(startPos, endPos, GRID_LINE_COLOR);
 		}
 
+		// Render current_gen
 		for (int row = 0; row < row_count; ++row) {
 			for (int col = 0; col < col_count; ++col) {
-				if (cell[row][col] == 1) {
+				if (current_gen[row][col] == 1) {
 					float x = col * cell_width;
 					float y = row * cell_height;
 					Rectangle rec = {
@@ -75,11 +120,58 @@ int main(void)
 			printf("x: %f, y: %f\n", mousePosition.x, mousePosition.y);
 			printf("col: %d, row: %d\n", col_index, row_index);
 
-			int cell_value = cell[row_index][col_index];
+			int cell_value = current_gen[row_index][col_index];
 			if (cell_value) {
-				cell[row_index][col_index] = 0;
+				current_gen[row_index][col_index] = 0;
 			} else {
-				cell[row_index][col_index] = 1;
+				current_gen[row_index][col_index] = 1;
+			}
+		}
+
+		if (IsKeyPressed(KEY_SPACE)) {
+			is_gol_play = !is_gol_play;
+		}
+
+		// Copy next gen to current gen
+		if (is_gol_play) {
+
+			if (cell_render_time_acc >= CELL_RENDER_TICK) {
+				cell_render_time_acc = 0;
+				for (int row = 0; row < row_count; ++row) {
+					for (int col = 0; col < col_count; ++col) {
+						current_gen[row][col] = next_gen[row][col];
+					}
+				}
+			}
+		}
+
+		// Reset the next gen
+		for (int row = 0; row < row_count; ++row) {
+			for (int col = 0; col < col_count; ++col) {
+				next_gen[row][col] = 0;
+			}
+		}
+
+		// TODO: Apply the rules of Game of Life
+		for (int row = 0; row < row_count; ++row) {
+			for (int col = 0; col < col_count; ++col) {
+				int curr_row = row;
+				int curr_col = col;
+				int curr_cell = current_gen[curr_row][curr_col];
+				int n_neighbors = get_neighbors_count(col_count, row_count,
+									 current_gen, curr_row, curr_col);
+		
+				if (curr_cell) {
+					if (n_neighbors == 2 || n_neighbors == 3) {
+						next_gen[curr_row][curr_col] = 1;
+					} else {
+						next_gen[curr_row][curr_col] = 0;
+					}
+				} else {
+					if (n_neighbors == 3) {
+						next_gen[curr_row][curr_col] = 1;
+					}
+				}
 			}
 		}
 
